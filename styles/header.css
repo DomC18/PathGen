@@ -1,0 +1,51 @@
+.header {
+    flex: 1;
+    display: flex;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    border-left-width: 0px;
+    border-top-width: 0px;
+    border-right-width: 0px;
+    border-bottom-width: 6px;
+    border-color: grey;
+    border-style: solid;
+}
+
+.header-operations-container {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+.header-window-dropdown {
+    font-size: 30px;
+    margin: 0px 20px 0px 0px;
+}
+.header-settings-dropdown {
+    font-size: 30px;
+    margin: 0;
+}
+
+
+.header-text-container {
+    display: flex;
+    align-items: center;
+    margin-left: -160px;
+}
+.header-text {
+    font-size: 60px;
+    margin: 0;
+    font-weight: bold;
+}
+
+
+.header-image-container {
+    display: flex;
+}
+.header-text-image {
+    width: 50px;
+    margin-right: 20px;
+}

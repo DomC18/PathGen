@@ -1,0 +1,18 @@
+body {
+    background-color: rgb(71, 0, 0);
+    font-family: "Poppins";
+    margin: 0px;
+    overflow-x: hidden;
+}
+.kanit {
+    font-family: "Kanit", "Open Sans", Arial, Helvetica, sans-serif;
+    color: rgb(255, 255, 255);
+}
+
+.simple-hoverable {
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+}
+.simple-hoverable:hover {
+    transform: scale(1.125);
+}

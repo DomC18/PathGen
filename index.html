@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ARPG</title>
+        <link rel="shortcut icon" href="images/aggieroboticslogo.png" />
+        <link rel="stylesheet" href="styles/general.css">
+        <link rel="stylesheet" href="styles/header.css">
+        <link rel="stylesheet" href="styles/sidebar.css">
+        <link rel="stylesheet" href="styles/pathgen.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        <script defer src="home.js"></script>
+    </head>
+    <body id="home">
+        <main class="kanit">
+            <header class="header">
+                <div class="header-operations-container">
+                    <p class="header-window-dropdown simple-hoverable">
+                        Window
+                    </p>
+                    <p class="header-settings-dropdown simple-hoverable">
+                        Settings
+                    </p>
+                </div>
+                <div class="header-text-container">
+                    <p class="header-text">
+                        Path Generation
+                    </p>
+                </div>
+                <div class="header-image-container">
+                    <img class="header-text-image" src="images/aggieroboticslogob.png" alt="">
+                </div>
+            </header>
+            <nav class="sidebar">
+                <div class="waypoints-container" id="waypoints-container">
+                    <p class="waypoints-text">
+                        Waypoints
+                    </p>
+                    <p class="waypoints-arrow" id="waypoints-arrow">
+                        ▲
+                    </p>
+                </div>
+                <div class="constraints-container" id="constraints-container">
+                    <p class="constraints-text">
+                        Constraints
+                    </p>
+                    <p class="constraints-arrow" id="constraints-arrow">
+                        ▲
+                    </p>
+                </div>
+                <div class="events-container" id="events-container">
+                    <p class="events-text">
+                        Events
+                    </p>
+                    <p class="events-arrow" id="events-arrow">
+                        ▲
+                    </p>
+                </div>
+                <div class="console-main-container">
+                    <p class="console-text">
+                        Console
+                    </p>
+                    <div class="console-container">
+                        <div class="main-console">
+                            <div class="console">
+                                sample text
+                            </div>
+                            <div class="divider"></div>
+                        </div>
+                        <div class="quick-actions-container">
+                            <div class="quick-action">
+                                <p class="quick-action-text">
+                                    Generate Code
+                                </p>
+                            </div>
+                            <div class="quick-action">
+                                <p class="quick-action-text">
+                                    Clear Console
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <section class="pathgen-container">
+                <img class="pathgen-image" src="images/field1.png" alt="">
+            </section>
+        </main>
+    </body>
+</html>

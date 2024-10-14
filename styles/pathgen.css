@@ -1,0 +1,11 @@
+.pathgen-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 100px 0px 0px 21%;
+    height: 100%;
+}
+.pathgen-image {
+    width: 75%;
+    height: 80%;
+}
