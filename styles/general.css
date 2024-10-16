@@ -3,6 +3,7 @@ body {
     font-family: "Poppins";
     margin: 0px;
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 .kanit {
     font-family: "Kanit", "Open Sans", Arial, Helvetica, sans-serif;

@@ -3,9 +3,23 @@
     align-items: center;
     justify-content: center;
     margin: 100px 0px 0px 21%;
-    height: 100%;
 }
 .pathgen-image {
-    width: 75%;
-    height: 80%;
+    height: 85vh;
+    margin-top: 27px;
+}
+
+.robot-dragger-base {
+    position: absolute;
+    left: 59vh;
+    top: 88.7vh;
+    z-index: 9;
+}
+.robot-dragger {
+    width: 32px;
+    height: 32px;
+    background-color: rgba(60, 60, 60, 0.7);
+    padding: 10px;
+    cursor: move;
+    z-index: 10;
 }

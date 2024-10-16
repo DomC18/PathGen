@@ -16,6 +16,8 @@
     border-right-width: 5px;
     border-color: grey;
     border-style: solid;
+    background-color: rgb(71, 0, 0);
+    z-index: 1;
 }
 
 .waypoints-container, .constraints-container, .events-container {
@@ -99,7 +101,7 @@
 }
 .quick-action-text {
     margin: 0;
-    font-size: 18px;
+    font-size: 12px;
 }
 .quick-action:hover {
     scale: 1.04;

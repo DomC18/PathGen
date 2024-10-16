@@ -13,6 +13,7 @@
     border-bottom-width: 6px;
     border-color: grey;
     border-style: solid;
+    z-index: 999;
 }
 
 .header-operations-container {
