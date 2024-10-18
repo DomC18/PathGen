@@ -5,15 +5,17 @@
     margin: 100px 0px 0px 21%;
 }
 .pathgen-image {
-    height: 85vh;
+    height: 85dvh;
     padding: 27px 0 27px 0;
 }
 
 .robot-dragger-base {
     position: absolute;
-    left: 59vh;
-    bottom: 6.12vh;
+    bottom: 42dvh;
     z-index: 9;
+}
+.first-base {
+    border: 2px solid yellow;
 }
 .robot-dragger {
     width: 32px;

@@ -24,8 +24,8 @@ function dragWaypoint(waypoint) {
         pos2 = pos4 - e.clientY;
         pos3 = e.clientX;
         pos4 = e.clientY;
-        pos5 = waypoint.offsetTop - pos2 + 24
-        pos6 = waypoint.offsetLeft - pos1 + 24;
+        pos5 = waypoint.offsetTop - pos2 + 26;
+        pos6 = waypoint.offsetLeft - pos1 + 26;
 
         for (var i=0; i<waypoints.length; i++) {
             if (waypoints[i] === waypoint) {
@@ -68,10 +68,10 @@ function drawLine(waypointBase) {
         document.getElementById("pathgen-container").appendChild(svgContainer);
     }
     var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("x1", lastWaypoint.offsetLeft + 24);
-    line.setAttribute("y1", lastWaypoint.offsetTop + 24);
-    line.setAttribute("x2", waypointBase.offsetLeft + 24);
-    line.setAttribute("y2", waypointBase.offsetTop + 24);
+    line.setAttribute("x1", lastWaypoint.offsetLeft + 26);
+    line.setAttribute("y1", lastWaypoint.offsetTop + 26);
+    line.setAttribute("x2", waypointBase.offsetLeft + 26);
+    line.setAttribute("y2", waypointBase.offsetTop + 26);
     line.setAttribute("stroke", "black");
     line.setAttribute("stroke-width", "2");
     svgContainer.appendChild(line);
@@ -81,8 +81,8 @@ function drawLine(waypointBase) {
 function waypointAt(x, y) {
     var waypointBase = document.createElement("div");
     waypointBase.className = "robot-dragger-base";
-    waypointBase.style.top = y-24 + "px";
-    waypointBase.style.left = x-24 + "px";
+    waypointBase.style.top = y-26 + "px";
+    waypointBase.style.left = x-26 + "px";
     document.getElementById("pathgen-container").appendChild(waypointBase);
     var waypointStyler = document.createElement("div");
     waypointStyler.className = "robot-dragger";
