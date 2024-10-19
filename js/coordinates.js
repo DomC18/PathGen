@@ -1,6 +1,6 @@
-start_pos = null; 
-start_angle = null;
-last_pos = null;
+var start_pos = null; 
+var start_angle = null;
+var last_pos = null;
 
 function to_output(self, translated_x_in, translated_y_in, angle_deg) {
     if (angle_deg !== null) {
@@ -10,46 +10,70 @@ function to_output(self, translated_x_in, translated_y_in, angle_deg) {
 }
 
 function compute_location(self, location) {
-    var x_in = location[0];
-    var y_in = location[1];
-    orig_pos = (x_in - self.start_pos[0], y_in - self.start_pos[1])
-    magnitude = sqrt(orig_pos[0] ** 2 + orig_pos[1] ** 2)
+    var x_in;
+    var y_in;
+    var old_angle;
+    var new_angle;
+    var final_pos;
+    var orig_pos;
+    var magnitude;
+    var relative_angle;
 
-    if -0.0005 < orig_pos[0] < 0.05:
-        old_angle = (90 if orig_pos[1] < 0 else 270)
-    else:
-        old_angle = degrees(atan(orig_pos[1] / orig_pos[0]))
+    x_in = location[0];
+    y_in = location[1];
+    orig_pos = (x_in - start_pos[0], y_in - start_pos[1]);
+    magnitude = Math.sqrt(orig_pos[0] ** 2 + orig_pos[1] ** 2);
+    if (-0.0005 < orig_pos[0] < 0.05) {
+        if (orig_pos[1] < 0) {
+            old_angle = 90;
+        } else {
+            old_angle = 270;
+        }
+    } else {
+        old_angle = (((Math.atan(orig_pos[1] / orig_pos[0]))*Math.PI)/180);
+    }
 
-    if orig_pos[0] < 0:
+    if (orig_pos[0] < 0) {
         old_angle += 180
-    new_angle = old_angle - self.start_angle
-    final_pos = (cos(radians(new_angle)) * magnitude, -sin(radians(new_angle)) * magnitude)
+    }
+    new_angle = old_angle - start_angle;
+    final_pos = (Math.cos((new_angle*180)/Math.PI) * magnitude, -Math.sin((new_angle*180)/Math.PI) * magnitude);
 
-    relative_angle = None
-    if self.last_pos is not None:
-        diff = (final_pos[0] - self.last_pos[0], final_pos[1] - self.last_pos[1])
+    if (last_pos !== null) {
+        diff = (final_pos[0] - self.last_pos[0], final_pos[1] - self.last_pos[1]);
 
-        if abs(diff[0]) < 0.0005:
-            relative_angle = (0 if final_pos[1] > self.last_pos[1] else 180)
-        else:
-            relative_angle = degrees(atan(diff[1] / diff[0]))
+        if (Math.abs(diff[0]) < 0.0005) {
+            if (final_pos[1] > last_pos[1]) {
+                relative_angle = 0;
+            } else {
+                relative_angle = 180;
+            }
+        }
+        else {
+            relative_angle = ((Math.atan(diff[1] / diff[0])*Math.PI)/180);
+        }
 
-        if diff[0] < 0:
+        if (diff[0] < 0) {
             relative_angle += 180
+        }
 
-        if relative_angle < 0:
+        if (relative_angle < 0) {
             relative_angle += 360
-    self._to_output(final_pos[0], final_pos[1], relative_angle)
-    self.last_pos = final_pos
+        }
+    }
+    to_output(final_pos[0], final_pos[1], relative_angle);
+    last_pos = final_pos;
 }
 
-def click_event(self, event, x, y, _, __):
-    if event == cv2.EVENT_LBUTTONDOWN:
-        pos_in_inches = x / width * 144, -y / height * 144
-        if self.start_pos is None:
-            self.start_pos = pos_in_inches
-            self.start_angle = -float(input("Enter starting angle in degrees (clockwise is positive):"))
-            print("Starting angle set\nClick on first location on map:")
-            print("Code:\nPath path;")
-        else:
-            self._compute_location(pos_in_inches)
+function click_event() {
+    pos_in_inches = (x / width * 144, -y / height * 144);
+    if (start_pos !== null) {
+        start_pos = pos_in_inches;
+        start_angle = -float(input("Enter starting angle in degrees (clockwise is positive):"));
+        console.log("Starting angle set\nClick on first location on map:");
+        console.log("Code:\nPath path;");
+    }
+    else {
+        compute_location(pos_in_inches);
+    }
+}
