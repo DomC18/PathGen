@@ -1,8 +1,8 @@
 function to_output(translated_x_in, translated_y_in, angle_deg) {
     if (angle_deg !== null) {
-        consol.textContent = consol.textContent + "path.add_turn(MyTurn(" + Math.round(angle_deg) + "_deg));\n"
+        consol.textContent = consol.textContent + "\npath.add_turn(MyTurn(" + Math.round(angle_deg) + "_deg));\n"
     }
-    consol.textContent = consol.textContent + "path.add_straight(Straight({" + Math.round(translated_x_in) + "_in, " + Math.round(translated_y_in) + "_in, 0_deg" + "}, 0_s, MOTOR_SPEED::MID));\n";
+    consol.textContent = consol.textContent + "path.add_straight(Straight({" + Math.round(translated_x_in) + "_in, " + Math.round(translated_y_in) + "_in, 0_deg" + "}, 0_s, MOTOR_SPEED::MID));";
 }
 
 function compute_location(location) {
@@ -79,10 +79,24 @@ function start_code(xbox, ybox) {
     start_pos = pos_in_inches;
     start_angle = 0;
     consol.textContent = "Path path;\n";
+    consol.style.scrollbarWidth = "initial";
+}
+
+function restart_code() {
+    clear_console();
+    document.getElementById("svg-paths").remove();
+    for (i=1; i<waypoints.length; i++) {
+        document.getElementById("pathgen-container").removeChild(waypoints[i]);
+    }
+    lines = [];
+    waypoints = [startWaypoint];
+    lastWaypoint = startWaypoint;
+    codeStarted = false;
 }
 
 function clear_console() {
     consol.textContent = "";
+    consol.style.scrollbarWidth = "none";
 }
 
 
@@ -207,9 +221,11 @@ var lastWaypoint = startWaypoint;
 waypoints.push(startWaypoint);
 dragWaypoint(startWaypoint);
 document.getElementById("pathgen-container").addEventListener("dblclick", function(e) {
-    var x = e.clientX;
-    var y = e.clientY;
-    waypointAt(x, y);
+    if (codeStarted) {
+        var x = e.clientX;
+        var y = e.clientY;
+        waypointAt(x, y);
+    }
 });
 document.getElementById("start-code").addEventListener("click", function() {
     if (!codeStarted) {
@@ -218,4 +234,5 @@ document.getElementById("start-code").addEventListener("click", function() {
         codeStarted = true;
     }
 })
+document.getElementById("restart-code").addEventListener("click", restart_code);
 document.getElementById("clear-console").addEventListener("click", clear_console);
