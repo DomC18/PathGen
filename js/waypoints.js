@@ -1,89 +1,133 @@
-function to_output(translated_x_in, translated_y_in, angle_deg) {
-    if (angle_deg !== null) {
-        consol.textContent = consol.textContent + "\npath.add_turn(MyTurn(" + Math.round(angle_deg) + "_deg));\n"
+var codeStarted = false;
+var startPosition = null; 
+var startAngle = null;
+var lastPosition = null;
+var waypoints = [];
+var lines = [];
+var spans = [];
+
+var image = document.getElementById("pathgen-image");
+var width = image.clientWidth;
+var height = image.clientHeight;
+var rect = image.getBoundingClientRect();
+var widthOffset = rect.left;
+var heightOffset = rect.top;
+var consol = document.getElementById("console");
+var startWaypoint = document.getElementById("robot-dragger-base");
+var lastWaypoint = startWaypoint;
+waypoints.push(startWaypoint);
+
+
+
+
+
+function updateConsole(translatedXInches, translatedYInches, angleDegrees, isNew, line1Index) {
+    var spanElement;
+    var spanElement2;
+
+    if (isNew) {
+        spanElement = document.createElement("span");
+        spanElement2 = document.createElement("span");
+        spanElement.style.display = "block";
+        spanElement2.style.display = "block";
+        spanElement.textContent = "path.add_turn(MyTurn(" + Math.round(angleDegrees*100)/100 + "_deg));";
+        spanElement2.textContent = "path.add_straight(Straight({" + Math.round(translatedXInches*100)/100 + "_in, " + Math.round(translatedYInches*100)/100 + "_in, 0_deg" + "}, 0_s, MOTOR_SPEED::MID));";
+        consol.appendChild(spanElement);
+        consol.appendChild(spanElement2);
+        spans.push([spanElement, spanElement2]);
+    } else {
+        spans[line1Index][0].textContent = "path.add_turn(MyTurn(" + Math.round(angleDegrees*100)/100 + "_deg));";
+        spans[line1Index][1].textContent = "path.add_straight(Straight({" + Math.round(translatedXInches*100)/100 + "_in, " + Math.round(translatedYInches*100)/100 + "_in, 0_deg" + "}, 0_s, MOTOR_SPEED::MID));";
     }
-    consol.textContent = consol.textContent + "path.add_straight(Straight({" + Math.round(translated_x_in) + "_in, " + Math.round(translated_y_in) + "_in, 0_deg" + "}, 0_s, MOTOR_SPEED::MID));";
 }
 
-function compute_location(location) {
-    var x_in;
-    var y_in;
-    var old_angle;
-    var new_angle;
-    var orig_pos = [];
-    var final_pos = [];
+
+function computeLocation(location, isNew, line1Index) {
+    var xInches;
+    var yInches;
+    var oldAngle;
+    var newAngle;
+    var originalPosition = [];
+    var finalPosition = [];
     var diff = [];
     var magnitude;
-    var relative_angle;
+    var relativeAngle;
 
-    x_in = location[0];
-    y_in = location[1];
-    orig_pos[0] = x_in - start_pos[0];
-    orig_pos[1] = y_in - start_pos[1];
-    magnitude = Math.sqrt(orig_pos[0] ** 2 + orig_pos[1] ** 2);
-    if (-0.0005 < orig_pos[0] < 0.05) {
-        if (orig_pos[1] < 0) {
-            old_angle = 90;
+    xInches = location[0];
+    yInches = location[1];
+    originalPosition[0] = xInches - startPosition[0];
+    originalPosition[1] = yInches - startPosition[1];
+    magnitude = Math.sqrt(originalPosition[0] ** 2 + originalPosition[1] ** 2);
+    if (-0.0005 < originalPosition[0] < 0.05) {
+        if (originalPosition[1] < 0) {
+            oldAngle = 90;
         } else {
-            old_angle = 270;
+            oldAngle = 270;
         }
     } else {
-        old_angle = (((Math.atan(orig_pos[1] / orig_pos[0]))*Math.PI)/180);
+        oldAngle = (((Math.atan(originalPosition[1] / originalPosition[0]))*Math.PI)/180);
     }
 
-    if (orig_pos[0] < 0) {
-        old_angle += 180
+    if (originalPosition[0] < 0) {
+        oldAngle += 180
     }
-    new_angle = old_angle - start_angle;
-    final_pos[0] = Math.cos((new_angle*180)/Math.PI) * magnitude;
-    final_pos[1] = -Math.sin((new_angle*180)/Math.PI) * magnitude;
+    newAngle = oldAngle - startAngle;
+    finalPosition[0] = Math.cos((newAngle*180)/Math.PI) * magnitude;
+    finalPosition[1] = -Math.sin((newAngle*180)/Math.PI) * magnitude;
 
-    if (last_pos !== null) {
-        diff[0] = final_pos[0] - last_pos[0];
-        diff[1] = final_pos[1] - last_pos[1];
+    if (lastPosition !== null) {
+        diff[0] = finalPosition[0] - lastPosition[0];
+        diff[1] = finalPosition[1] - lastPosition[1];
 
         if (Math.abs(diff[0]) < 0.0005) {
-            if (final_pos[1] > last_pos[1]) {
-                relative_angle = 0;
+            if (finalPosition[1] > lastPosition[1]) {
+                relativeAngle = 0;
             } else {
-                relative_angle = 180;
+                relativeAngle = 180;
             }
         }
         else {
-            relative_angle = ((Math.atan(diff[1] / diff[0])*Math.PI)/180);
+            relativeAngle = ((Math.atan(diff[1] / diff[0])*Math.PI)/180);
         }
 
         if (diff[0] < 0) {
-            relative_angle += 180
+            relativeAngle += 180
         }
 
-        if (relative_angle < 0) {
-            relative_angle += 360
+        if (relativeAngle < 0) {
+            relativeAngle += 360
         }
     }
-    to_output(final_pos[0], final_pos[1], relative_angle);
-    last_pos = final_pos;
+    updateConsole(finalPosition[0], finalPosition[1], relativeAngle, isNew, line1Index);
+    lastPosition = finalPosition;
 }
 
-function generate_code(x, y) {
-    var pos_in_inches = [];
-    pos_in_inches[0] = ((x-widthOffset)/width) * 144;
-    pos_in_inches[1] = ((y-heightOffset)/height) * 144;
-    compute_location(pos_in_inches);
+
+function generateCode(x, y, isNew, line1Index) {
+    var position = [];
+    position[0] = ((x-widthOffset)/width) * 144;
+    position[1] = ((y-heightOffset)/height) * 144;
+    computeLocation(position, isNew, line1Index);
 }
 
-function start_code(xbox, ybox) {
-    var pos_in_inches = [];
-    pos_in_inches[0] = ((xbox+26-widthOffset)/width) * 144;
-    pos_in_inches[1] = ((ybox+26-heightOffset)/height) * 144;
-    start_pos = pos_in_inches;
-    start_angle = 0;
-    consol.textContent = "Path path;\n";
+
+function startCode(xbox, ybox) {
+    var position = [];
+    position[0] = ((xbox+26-widthOffset)/width) * 144;
+    position[1] = ((ybox+26-heightOffset)/height) * 144;
+    startPosition = position;
+    startAngle = 0;
+
+    spanElement = document.createElement("span");
+    spanElement.style.display = "block";
+    spanElement.textContent = "Path path;";
+    consol.appendChild(spanElement);
     consol.style.scrollbarWidth = "initial";
 }
 
-function restart_code() {
-    clear_console();
+
+function restartCode() {
+    clearConsole();
     document.getElementById("svg-paths").remove();
     for (i=1; i<waypoints.length; i++) {
         document.getElementById("pathgen-container").removeChild(waypoints[i]);
@@ -91,19 +135,15 @@ function restart_code() {
     lines = [];
     waypoints = [startWaypoint];
     lastWaypoint = startWaypoint;
-    codeStarted = false;
 }
 
-function clear_console() {
-    consol.textContent = "";
+function clearConsole() {
+    while (consol.children.length > 1) {
+        consol.removeChild(consol.children[1]);
+    }
+    spans = [];
     consol.style.scrollbarWidth = "none";
 }
-
-
-
-
-
-
 
 
 function dragWaypoint(waypoint) {
@@ -144,6 +184,7 @@ function dragWaypoint(waypoint) {
                 if (line1) {
                     line1.setAttribute("x2", pos6);
                     line1.setAttribute("y2", pos5);
+                    generateCode(pos3, pos4, false, i-1);
                 }
                 if (line2) {
                     line2.setAttribute("x1", pos6);
@@ -161,6 +202,7 @@ function dragWaypoint(waypoint) {
         document.onmousemove = null;
     }
 }
+
 
 function drawLine(waypointBase) {
     var svgContainer = document.getElementById("svg-paths");
@@ -186,6 +228,7 @@ function drawLine(waypointBase) {
     lines.push(line);
 }
 
+
 function waypointAt(x, y) {
     var waypointBase = document.createElement("div");
     waypointBase.className = "robot-dragger-base";
@@ -199,26 +242,13 @@ function waypointAt(x, y) {
     drawLine(waypointBase);
     waypoints.push(waypointBase);
     lastWaypoint = waypointBase;
-    generate_code(x+26, y+26);
+    generateCode(x+26, y+26, true, 0);
 }
 
-var codeStarted = false;
-var start_pos = null; 
-var start_angle = null;
-var last_pos = null;
-var image = document.getElementById("pathgen-image");
-var width = image.clientWidth;
-var height = image.clientHeight;
-var rect = image.getBoundingClientRect();
-var widthOffset = rect.left;
-var heightOffset = rect.top;
-var consol = document.getElementById("console");
 
-var waypoints = [];
-var lines = [];
-var startWaypoint = document.getElementById("robot-dragger-base");
-var lastWaypoint = startWaypoint;
-waypoints.push(startWaypoint);
+
+
+
 dragWaypoint(startWaypoint);
 document.getElementById("pathgen-container").addEventListener("dblclick", function(e) {
     if (codeStarted) {
@@ -230,9 +260,8 @@ document.getElementById("pathgen-container").addEventListener("dblclick", functi
 document.getElementById("start-code").addEventListener("click", function() {
     if (!codeStarted) {
         var startrect = startWaypoint.getBoundingClientRect();
-        start_code(startrect.left, startrect.top);
+        startCode(startrect.left, startrect.top);
         codeStarted = true;
     }
 })
-document.getElementById("restart-code").addEventListener("click", restart_code);
-document.getElementById("clear-console").addEventListener("click", clear_console);
+document.getElementById("restart-code").addEventListener("click", restartCode);
