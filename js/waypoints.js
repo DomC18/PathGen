@@ -181,14 +181,21 @@ function dragWaypoint(waypoint) {
                 if (i <= waypoints.length) {
                     line2 = lines[i];
                 }
+
+                if (line2) {
+                    line2.setAttribute("x1", pos6);
+                    line2.setAttribute("y1", pos5);
+                }
                 if (line1) {
                     line1.setAttribute("x2", pos6);
                     line1.setAttribute("y2", pos5);
                     generateCode(pos3, pos4, false, i-1);
-                }
-                if (line2) {
-                    line2.setAttribute("x1", pos6);
-                    line2.setAttribute("y1", pos5);
+                } else {
+                    if (waypoints.length > 1) {
+                        var startrect = startWaypoint.getBoundingClientRect();
+                        startPosition[0] = ((startrect.left+26-widthOffset)/width) * 144;
+                        startPosition[1] = ((startrect.top+26-heightOffset)/height) * 144;
+                    }
                 }
             }
         }

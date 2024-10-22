@@ -25,4 +25,5 @@
     cursor: move;
     z-index: 10;
     transform: rotate(0);
+    border: 2px solid yellow;
 }

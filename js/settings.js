@@ -12,5 +12,5 @@ function onTopClick(topID, divID, check) {
     check = !check;
 }
 
-document.getElementById("header-window-dropdown").addEventListener("click", () => onTopClick("header-window-dropdown", "header-window", windowClicked));
-document.getElementById("header-settings-dropdown").addEventListener("click", () => onTopClick("header-settings-dropdown", "header-settings", settingsClicked));
+// document.getElementById("header-window-dropdown").addEventListener("click", () => onTopClick("header-window-dropdown", "header-window", windowClicked));
+// document.getElementById("header-settings-dropdown").addEventListener("click", () => onTopClick("header-settings-dropdown", "header-settings", settingsClicked));

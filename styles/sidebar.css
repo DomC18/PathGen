@@ -2,12 +2,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
+    justify-content: space-between;
     position: fixed;
     top: 0;
     left: 0;
     width: 21%;
-    height: 100%;
+    height: 90%;
     margin-top: 100px;
     padding-top: 30px;
     border-left-width: 0px;
@@ -19,34 +19,64 @@
     background-color: rgb(71, 0, 0);
     z-index: 1;
 }
+.options-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 400px;
+    overflow-y: hidden;
+    gap: 30px;
+    width: 100%;
+}
 
 .waypoints-container, .constraints-container, .events-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     cursor: pointer;
     width: 88%;
     padding: 14px 0;
-    display: flex;
     border: solid 4px rgb(95, 95, 95);
-    justify-content: space-between;
     border-radius: 30px;
     font-size: 26px;
     text-align: left;
+    max-height: 200px;
+    overflow-y: hidden;
     transition: all 0.25s ease-in-out;
 }
 .waypoints-container:hover, .constraints-container:hover, .events-container:hover {
     background-color: rgb(141, 141, 141);
 }
 .waypoints-text, .constraints-text, .events-text {
+    display: inline;
     margin: 0 0 0 13px;
     width: 130px;
 }
 .waypoints-arrow, .constraints-arrow, .events-arrow {
+    display: inline;
     margin: 0 13px 0 0;
     transform: rotate(0);
 }
+.waypoints-text-container, .constraints-text-container, .events-text-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+.waypoint-container, .constraint-container, .event-container {
+    margin: 10px 13px 0 13px;
+    border: solid 0px grey;
+    border-top-width: 2px;
+    max-height: 120px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+
 
 .console-main-container {
     width: 100%;
-    height: 100%;
     text-align: left;
 }
 .console-text {
@@ -54,30 +84,31 @@
     margin: 0px 0px 0px 20px;
 }
 .console-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     width: 100%;
-    height: 100%;
     border-style: solid;
     border-color: grey;
     border-top-width: 3px;
     border-left-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
+    padding: 0 0 19%;
     background-color: rgb(31, 31, 31);
 }
 .main-console {
-    height: 61%;
-    overflow-y: scroll;
     scrollbar-width: none;
     -ms-overflow-style: none;
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: space-between;
-    padding: 10px 10px 16px 10px;
+    padding: 10px 10px 13px 10px;
 }
 .console {
     width: 100%;
-    height: 416px;
+    height: 300px;
     text-align: left;
     overflow-y: scroll;
     scrollbar-width: none;
