@@ -15,7 +15,7 @@ var heightOffset = rect.top;
 var consol = document.getElementById("console");
 var startWaypoint = document.getElementById("robot-dragger-base");
 var lastWaypoint = startWaypoint;
-waypoints.push(startWaypoint);
+waypoints.push([startWaypoint, null, null]);
 
 
 
@@ -130,10 +130,10 @@ function restartCode() {
     clearConsole();
     document.getElementById("svg-paths").remove();
     for (i=1; i<waypoints.length; i++) {
-        document.getElementById("pathgen-container").removeChild(waypoints[i]);
+        document.getElementById("pathgen-container").removeChild(waypoints[i][0]);
     }
     lines = [];
-    waypoints = [startWaypoint];
+    waypoints = [[startWaypoint, null, null]];
     lastWaypoint = startWaypoint;
 }
 
@@ -168,6 +168,7 @@ function dragWaypoint(waypoint) {
         e = e || window.event;
         e.preventDefault();
 
+        var startDragged = false;
         pos1 = pos3 - e.clientX;
         pos2 = pos4 - e.clientY;
         pos3 = e.clientX;
@@ -176,7 +177,10 @@ function dragWaypoint(waypoint) {
         pos6 = waypoint.offsetLeft - pos1 + 26;
 
         for (var i=0; i<waypoints.length; i++) {
-            if (waypoints[i] === waypoint) {
+            if (startDragged) {
+                generateCode(waypoints[i][1], waypoints[i][2], false, i-1);
+            }
+            if (waypoints[i][0] === waypoint) {
                 line1 = lines[i-1];
                 if (i <= waypoints.length) {
                     line2 = lines[i];
@@ -195,6 +199,7 @@ function dragWaypoint(waypoint) {
                         var startrect = startWaypoint.getBoundingClientRect();
                         startPosition[0] = ((startrect.left+26-widthOffset)/width) * 144;
                         startPosition[1] = ((startrect.top+26-heightOffset)/height) * 144;
+                        startDragged = true;
                     }
                 }
             }
@@ -247,7 +252,7 @@ function waypointAt(x, y) {
     waypointBase.appendChild(waypointStyler);
     dragWaypoint(waypointBase);
     drawLine(waypointBase);
-    waypoints.push(waypointBase);
+    waypoints.push([waypointBase, x+26, y+26]);
     lastWaypoint = waypointBase;
     generateCode(x+26, y+26, true, 0);
 }
