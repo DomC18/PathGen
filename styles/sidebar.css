@@ -64,13 +64,15 @@
     justify-content: space-between;
 }
 .waypoint-container, .constraint-container, .event-container {
+    display: none;
     margin: 10px 13px 0 13px;
     border: solid 0px grey;
     border-top-width: 2px;
-    max-height: 120px;
+    max-height: 136px;
     overflow-y: scroll;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    transition: all 0.5s ease-in-out;
 }
 
 

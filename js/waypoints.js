@@ -6,6 +6,9 @@ var waypoints = [];
 var lines = [];
 var spans = [];
 
+var waypointsCollapsed = true;
+var constraintsCollapsed = true;
+var eventsCollapsed = true;
 var image = document.getElementById("pathgen-image");
 var width = image.clientWidth;
 var height = image.clientHeight;
@@ -21,7 +24,42 @@ waypoints.push([startWaypoint, null, null]);
 
 
 
-function updateConsole(translatedXInches, translatedYInches, angleDegrees, isNew, line1Index) {
+function collapse(elementName, collapsed) {
+    var element = document.getElementById(elementName);
+    if (collapsed) {
+        element.style.display = "block";
+        element.style.height = "100%";
+    } else {
+        element.style.display = "none";
+        element.style.height = "0%";
+    }
+    collapsed = !collapsed;
+}
+
+
+function makeWaypointElements(waypointIDX) {
+    var waypoint = document.createElement("div");
+    var waypointName = document.createElement("p");
+    var waypointButtonsContainer = document.createElement("div");
+    var removeWaypointButton = document.createElement("div");
+    var removeWaypointText = document.createElement("p");
+    waypoint.className = "waypoint";
+    waypointName.className = "waypoint-name";
+    waypointButtonsContainer.className = "waypoint-buttons-container";
+    removeWaypointButton.className = "remove-waypoint-button";
+    removeWaypointText.className = "remove-waypoint-text";
+    waypointName.textContent = "Waypoint " + String(waypointIDX);
+    removeWaypointText.textContent = "Remove"
+    document.getElementById("waypoints-arrow").textContent = String(waypoints.length) + "▲";
+    document.getElementById("waypoint-container").appendChild(waypoint);
+    waypoint.appendChild(waypointName);
+    waypoint.appendChild(waypointButtonsContainer);
+    waypointButtonsContainer.appendChild(removeWaypointButton);
+    removeWaypointButton.appendChild(removeWaypointText);
+}
+
+
+function updatePoints(translatedXInches, translatedYInches, angleDegrees, isNew, line1Index) {
     var spanElement;
     var spanElement2;
 
@@ -98,7 +136,7 @@ function computeLocation(location, isNew, line1Index) {
             relativeAngle += 360
         }
     }
-    updateConsole(finalPosition[0], finalPosition[1], relativeAngle, isNew, line1Index);
+    updatePoints(finalPosition[0], finalPosition[1], relativeAngle, isNew, line1Index);
     lastPosition = finalPosition;
 }
 
@@ -135,6 +173,8 @@ function restartCode() {
     lines = [];
     waypoints = [[startWaypoint, null, null]];
     lastWaypoint = startWaypoint;
+    document.getElementById("waypoint-container").style.display = "none";
+    document.getElementById("waypoints-arrow").textContent = "1▲";
 }
 
 function clearConsole() {
@@ -255,6 +295,8 @@ function waypointAt(x, y) {
     waypoints.push([waypointBase, x+26, y+26]);
     lastWaypoint = waypointBase;
     generateCode(x+26, y+26, true, 0);
+    makeWaypointElements(waypoints.length - 1);
+    document.getElementById("waypoint-container").style.display = "block";
 }
 
 
@@ -275,5 +317,14 @@ document.getElementById("start-code").addEventListener("click", function() {
         startCode(startrect.left, startrect.top);
         codeStarted = true;
     }
-})
+});
 document.getElementById("restart-code").addEventListener("click", restartCode);
+document.getElementById("waypoints-container").addEventListener("click", () => {
+    collapse("waypoints-container", waypointsCollapsed);
+});
+document.getElementById("constraints-container").addEventListener("click", () => {
+    collapse("constraints-container", constraintsCollapsed);
+});
+document.getElementById("events-container").addEventListener("click", () => {
+    collapse("events-container", eventsCollapsed);
+});
