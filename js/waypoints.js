@@ -4,149 +4,16 @@ var startAngle = null;
 var lastPosition = null;
 var waypoints = [];
 var lines = [];
-var spans = [];
 
-var waypointsCollapsed = true;
-var constraintsCollapsed = true;
-var eventsCollapsed = true;
 var image = document.getElementById("pathgen-image");
 var width = image.clientWidth;
 var height = image.clientHeight;
 var rect = image.getBoundingClientRect();
 var widthOffset = rect.left;
 var heightOffset = rect.top;
-var consol = document.getElementById("console");
 var startWaypoint = document.getElementById("robot-dragger-base");
 var lastWaypoint = startWaypoint;
-waypoints.push([startWaypoint, null, null]);
-
-
-
-
-
-function collapse(elementName, collapsed) {
-    var element = document.getElementById(elementName);
-    if (collapsed) {
-        element.style.display = "block";
-        element.style.height = "100%";
-    } else {
-        element.style.display = "none";
-        element.style.height = "0%";
-    }
-    collapsed = !collapsed;
-}
-
-
-function makeWaypointElements(waypointIDX) {
-    var waypoint = document.createElement("div");
-    var waypointName = document.createElement("p");
-    var waypointButtonsContainer = document.createElement("div");
-    var removeWaypointButton = document.createElement("div");
-    var removeWaypointText = document.createElement("p");
-    waypoint.className = "waypoint";
-    waypointName.className = "waypoint-name";
-    waypointButtonsContainer.className = "waypoint-buttons-container";
-    removeWaypointButton.className = "remove-waypoint-button";
-    removeWaypointText.className = "remove-waypoint-text";
-    waypointName.textContent = "Waypoint " + String(waypointIDX);
-    removeWaypointText.textContent = "Remove"
-    document.getElementById("waypoints-arrow").textContent = String(waypoints.length) + "▲";
-    document.getElementById("waypoint-container").appendChild(waypoint);
-    waypoint.appendChild(waypointName);
-    waypoint.appendChild(waypointButtonsContainer);
-    waypointButtonsContainer.appendChild(removeWaypointButton);
-    removeWaypointButton.appendChild(removeWaypointText);
-}
-
-
-function updatePoints(translatedXInches, translatedYInches, angleDegrees, isNew, line1Index) {
-    var spanElement;
-    var spanElement2;
-
-    if (isNew) {
-        spanElement = document.createElement("span");
-        spanElement2 = document.createElement("span");
-        spanElement.style.display = "block";
-        spanElement2.style.display = "block";
-        spanElement.textContent = "path.add_turn(MyTurn(" + Math.round(angleDegrees*100)/100 + "_deg));";
-        spanElement2.textContent = "path.add_straight(Straight({" + Math.round(translatedXInches*100)/100 + "_in, " + Math.round(translatedYInches*100)/100 + "_in, 0_deg" + "}, 0_s, MOTOR_SPEED::MID));";
-        consol.appendChild(spanElement);
-        consol.appendChild(spanElement2);
-        spans.push([spanElement, spanElement2]);
-    } else {
-        spans[line1Index][0].textContent = "path.add_turn(MyTurn(" + Math.round(angleDegrees*100)/100 + "_deg));";
-        spans[line1Index][1].textContent = "path.add_straight(Straight({" + Math.round(translatedXInches*100)/100 + "_in, " + Math.round(translatedYInches*100)/100 + "_in, 0_deg" + "}, 0_s, MOTOR_SPEED::MID));";
-    }
-}
-
-
-function computeLocation(location, isNew, line1Index) {
-    var xInches;
-    var yInches;
-    var oldAngle;
-    var newAngle;
-    var originalPosition = [];
-    var finalPosition = [];
-    var diff = [];
-    var magnitude;
-    var relativeAngle;
-
-    xInches = location[0];
-    yInches = location[1];
-    originalPosition[0] = xInches - startPosition[0];
-    originalPosition[1] = yInches - startPosition[1];
-    magnitude = Math.sqrt(originalPosition[0] ** 2 + originalPosition[1] ** 2);
-    if (-0.0005 < originalPosition[0] < 0.05) {
-        if (originalPosition[1] < 0) {
-            oldAngle = 90;
-        } else {
-            oldAngle = 270;
-        }
-    } else {
-        oldAngle = (((Math.atan(originalPosition[1] / originalPosition[0]))*Math.PI)/180);
-    }
-
-    if (originalPosition[0] < 0) {
-        oldAngle += 180
-    }
-    newAngle = oldAngle - startAngle;
-    finalPosition[0] = Math.cos((newAngle*180)/Math.PI) * magnitude;
-    finalPosition[1] = -Math.sin((newAngle*180)/Math.PI) * magnitude;
-
-    if (lastPosition !== null) {
-        diff[0] = finalPosition[0] - lastPosition[0];
-        diff[1] = finalPosition[1] - lastPosition[1];
-
-        if (Math.abs(diff[0]) < 0.0005) {
-            if (finalPosition[1] > lastPosition[1]) {
-                relativeAngle = 0;
-            } else {
-                relativeAngle = 180;
-            }
-        }
-        else {
-            relativeAngle = ((Math.atan(diff[1] / diff[0])*Math.PI)/180);
-        }
-
-        if (diff[0] < 0) {
-            relativeAngle += 180
-        }
-
-        if (relativeAngle < 0) {
-            relativeAngle += 360
-        }
-    }
-    updatePoints(finalPosition[0], finalPosition[1], relativeAngle, isNew, line1Index);
-    lastPosition = finalPosition;
-}
-
-
-function generateCode(x, y, isNew, line1Index) {
-    var position = [];
-    position[0] = ((x-widthOffset)/width) * 144;
-    position[1] = ((y-heightOffset)/height) * 144;
-    computeLocation(position, isNew, line1Index);
-}
+waypoints.push([startWaypoint, 0, 0]);
 
 
 function startCode(xbox, ybox) {
@@ -155,34 +22,6 @@ function startCode(xbox, ybox) {
     position[1] = ((ybox+26-heightOffset)/height) * 144;
     startPosition = position;
     startAngle = 0;
-
-    spanElement = document.createElement("span");
-    spanElement.style.display = "block";
-    spanElement.textContent = "Path path;";
-    consol.appendChild(spanElement);
-    consol.style.scrollbarWidth = "initial";
-}
-
-
-function restartCode() {
-    clearConsole();
-    document.getElementById("svg-paths").remove();
-    for (i=1; i<waypoints.length; i++) {
-        document.getElementById("pathgen-container").removeChild(waypoints[i][0]);
-    }
-    lines = [];
-    waypoints = [[startWaypoint, null, null]];
-    lastWaypoint = startWaypoint;
-    document.getElementById("waypoint-container").style.display = "none";
-    document.getElementById("waypoints-arrow").textContent = "1▲";
-}
-
-function clearConsole() {
-    while (consol.children.length > 1) {
-        consol.removeChild(consol.children[1]);
-    }
-    spans = [];
-    consol.style.scrollbarWidth = "none";
 }
 
 
@@ -218,7 +57,7 @@ function dragWaypoint(waypoint) {
 
         for (var i=0; i<waypoints.length; i++) {
             if (startDragged) {
-                generateCode(waypoints[i][1], waypoints[i][2], false, i-1);
+                waypointUpdate(waypoints[i][1], waypoints[i][2], false, i-1);
             }
             if (waypoints[i][0] === waypoint) {
                 line1 = lines[i-1];
@@ -233,7 +72,7 @@ function dragWaypoint(waypoint) {
                 if (line1) {
                     line1.setAttribute("x2", pos6);
                     line1.setAttribute("y2", pos5);
-                    generateCode(pos3, pos4, false, i-1);
+                    waypointUpdate(pos3, pos4, false, i-1);
                 } else {
                     if (waypoints.length > 1) {
                         var startrect = startWaypoint.getBoundingClientRect();
@@ -286,6 +125,7 @@ function waypointAt(x, y) {
     waypointBase.className = "robot-dragger-base";
     waypointBase.style.top = y-26 + "px";
     waypointBase.style.left = x-26 + "px";
+    waypointBase.textContent = x
     document.getElementById("pathgen-container").appendChild(waypointBase);
     var waypointStyler = document.createElement("div");
     waypointStyler.className = "robot-dragger";
@@ -294,16 +134,13 @@ function waypointAt(x, y) {
     drawLine(waypointBase);
     waypoints.push([waypointBase, x+26, y+26]);
     lastWaypoint = waypointBase;
-    generateCode(x+26, y+26, true, 0);
-    makeWaypointElements(waypoints.length - 1);
-    document.getElementById("waypoint-container").style.display = "block";
+    // import from code_text.js
+    waypointUpdate(x+26, y+26, true, 0);
 }
 
 
-
-
-
 dragWaypoint(startWaypoint);
+
 document.getElementById("pathgen-container").addEventListener("dblclick", function(e) {
     if (codeStarted) {
         var x = e.clientX;
@@ -311,20 +148,29 @@ document.getElementById("pathgen-container").addEventListener("dblclick", functi
         waypointAt(x, y);
     }
 });
-document.getElementById("start-code").addEventListener("click", function() {
-    if (!codeStarted) {
-        var startrect = startWaypoint.getBoundingClientRect();
-        startCode(startrect.left, startrect.top);
-        codeStarted = true;
-    }
-});
-document.getElementById("restart-code").addEventListener("click", restartCode);
-document.getElementById("waypoints-container").addEventListener("click", () => {
-    collapse("waypoints-container", waypointsCollapsed);
-});
-document.getElementById("constraints-container").addEventListener("click", () => {
-    collapse("constraints-container", constraintsCollapsed);
-});
-document.getElementById("events-container").addEventListener("click", () => {
-    collapse("events-container", eventsCollapsed);
-});
+
+function resetLines() {
+    lines = [];
+    waypoints = [[startWaypoint, 0, 0]];
+    lastWaypoint = startWaypoint;
+}
+
+function waypointUpdate(x, y, isNew, line1Index){
+    var position = [];
+
+    position[0] = ((x-widthOffset)/width) * 144;
+    position[1] = ((y-heightOffset)/height) * 144;
+
+    var first_waypoint = waypoints[1]
+    console.log(first_waypoint[1])
+    var relative_0_0 = []
+    relative_0_0[0] = first_waypoint.clientX
+    relative_0_0[1] = first_waypoint.clientY
+
+    console.log([position[0] - relative_0_0[0], position[1] - relative_0_0[0]])
+
+    
+    //import from relativePosition
+    var position_relative = computeLocation(position, isNew, line1Index);
+    
+}
